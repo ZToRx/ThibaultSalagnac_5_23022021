@@ -8,6 +8,53 @@ function getSelectValue(){
   selected = document.getElementById("select").value;
 }
 
+function save() {
+  const contact = {
+    firstName : document.getElementById("firstName").value,
+    lastName : document.getElementById("lastName").value,
+    address : document.getElementById("adresse").value,
+    city : document.getElementById("city").value,
+    email : document.getElementById("email").value
+  };
+  sessionStorage.setItem("contact", JSON.stringify(contact));
+  let products = [];
+
+  const value = JSON.parse(localStorage.getItem("article"))
+  for(let i in value){
+    products.push(value[i]._id);
+  }
+  const data = [contact, products];
+  console.log(data);
+  
+  fetch("http://localhost:3000/api/order", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json", 
+      "Content-Type": "application/json"
+
+    },
+    body: JSON.stringify(data)
+  })
+
+  .then(function(res) {
+    if (res.ok) {
+      return res.json();
+    }
+  })
+
+  // .then(async (response) => {
+  //   try {
+  //     console.log(response);
+  //     const contenu = await response.json();
+  //     console.log(contenu);
+  //     alert("ok");
+  //   } catch(e) {
+  //     console.log(e);
+  //   }
+  // });
+
+}
+
 //Cameras
 
 function getAllProduct() {
@@ -107,31 +154,4 @@ function getCart() {
     .getElementById("totalArticle")
     .textContent = price/100 + " €";
 
-  function send(e) {
-    e.preventDefault();
-    fetch("https://mockbin.com/request", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json', 
-        'Content-Type': 'application/json'
-      },
-      body: localStorage.getItem("article")
-    })
-
-    .then(function(res) {
-      if (res.ok) {
-        return res.json();
-      }
-    })
-
-    .then(function(value) {
-        console.log(value.postData.text);
-    });
-
-  }
-  
-  document
-    .getElementById("form")
-    .addEventListener("submit", send);
-  
 }

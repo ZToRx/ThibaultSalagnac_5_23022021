@@ -77,20 +77,27 @@
             </ul>
 
           </div>
-          <form id="form">
+          <p class="text-danger">Les champs avec un * sont obligatoires</p>
+          <form id="contact">
             <div class="form-group">
-            <input type="email" class="form-control" placeholder="Adresse Email*" id="email" required/>
+              <input type="text" class="form-control" placeholder="Nom*" required id="firstName" name="firstName" value=""/>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Nom*" id="Nom*" required/>
+              <input type="text" class="form-control" placeholder="Prenom*" required id="lastName" name="lastName" value=""/>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Prenom*" id="prenom" required/>
+              <input type="text" class="form-control" placeholder="Adresse*" required id="adresse" name="adresse" value=""/>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Telephone" id="tel" required/>
-            </div>
-            <input class="btn btn-primary btn-block" type="submit" value="Commander" />
+              <input  type="text" class="form-control" placeholder="Ville*" required id="city" name="city" value=""/>
+              </div>
+            <div class="form-group">
+              <input  type="email" class="form-control" placeholder="Adresse Email*" required id="email" name="email" value=""/>
+              </div>
+              <div class="form-group">
+                <input  type="email" class="form-control" placeholder="Confirmer de l'email*" required id="email2" name="email2" value=""/>
+                </div>
+            <input class="btn btn-primary btn-block"  type="button" onclick="save();" value="Commander" />
           </form>
         </div>
       </div>
