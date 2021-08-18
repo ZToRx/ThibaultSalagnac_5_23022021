@@ -2,7 +2,8 @@ let productInLS = JSON.parse(localStorage.getItem("article"));
 let selected;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-const id = urlParams.get("id")
+const id = urlParams.get("id");
+const orderId = urlParams.get("orderId");
 
 function getSelectValue(){
   selected = document.getElementById("select").value;
@@ -23,15 +24,14 @@ function save() {
   for(let i in value){
     products.push(value[i]._id);
   }
-  const data = [contact, products];
+  const data = {contact, products};
   console.log(data);
   
-  fetch("http://localhost:3000/api/order", {
+  fetch("http://localhost:3000/api/cameras/order", {
     method: "POST",
     headers: {
       "Accept": "application/json", 
       "Content-Type": "application/json"
-
     },
     body: JSON.stringify(data)
   })
@@ -42,16 +42,9 @@ function save() {
     }
   })
 
-  // .then(async (response) => {
-  //   try {
-  //     console.log(response);
-  //     const contenu = await response.json();
-  //     console.log(contenu);
-  //     alert("ok");
-  //   } catch(e) {
-  //     console.log(e);
-  //   }
-  // });
+  .then(function(value) {
+    window.location.replace("http://127.0.0.1:5500/ThibaultSalagnac_5_23022021/confirm.html?orderId="+ value.orderId);
+  });
 
 }
 
@@ -72,7 +65,21 @@ function getAllProduct() {
       //card de chaque pruduit
       const catalogueDiv = document.createElement("div");
       catalogueDiv.classList.add("col-md-4");
-      catalogueDiv.innerHTML = "<div class=\"card mb-4 box-shadow\"><div class=\"embed-responsive embed-responsive-16by9\"><img class=\"card-img-top embed-responsive-item\" src=\"" + value[i].imageUrl + "\" alt=\"Card image cap\"></div><div class=\"card-body\"><h4 class=\"card-title\">"+ value[i].name +"</h4><p class=\"card-text\">"+ value[i].description +"</p><div class=\"d-flex justify-content-between align-items-center\"><a href=\"./product.html?id="+ value[i]._id +"\" type=\"button\" class=\"btn btn-sm btn-outline-secondary stretched-link\">Détails</a><small class=\"text-muted\">"+ value[i].price / 100 + "€" +"</small></div></div></div>";
+      catalogueDiv.innerHTML = `
+      <div class="card mb-4 box-shadow">
+        <div class="embed-responsive embed-responsive-16by9">
+          <img class="card-img-top embed-responsive-item" src="` + value[i].imageUrl + `" alt="Card image cap">
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">`+ value[i].name +`</h4>
+          <p class="card-text">`+ value[i].description +`</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="./product.html?id=`+ value[i]._id +`" type="button" class="btn btn-sm btn-outline-secondary stretched-link">Détails</a>
+            <small class="text-muted">`+ value[i].price / 100 + "€" +`</small>
+          </div>
+        </div>
+      </div>
+      `;
       catalogue.appendChild(catalogueDiv);
     }
 
@@ -98,12 +105,27 @@ function getProduct() {
     // card du produit selectionner
     const productDiv = document.createElement("div");
     productDiv.classList.add("card","mb-4","box-shadow");
-    productDiv.innerHTML = "<img class=\"card-img-top\" src=\"" + value.imageUrl + "\" alt=\"Un article du magasin\"><div class=\"card-body\"><h4 class=\"card-title\">"+ value.name +"</h4><p class=\"card-text\">"+ value.description +"</p><div class=\"d-flex justify-content-between align-items-center flex-column-reverse flex-sm-row\"><div class=\"btn-group pt-3 pt-sm-0\"><button id=\"addCart\" type=\"button\" class=\"btn btn-success\">Ajouter au Panier</button><select id=\"select\" onchange=\"getSelectValue();\" class=\"form-select mr-3 rounded-right\" aria-label=\"Optique pour appareil photo\"><option id=\"option\" value\"null\">Optiques</option></select></div><small class=\"text-muted\">"+ value.price / 100 + "€" +"</small></div></div>";
+    productDiv.innerHTML = `
+    <img class="card-img-top" src="` + value.imageUrl + `" alt="Un article du magasin">
+     <div class="card-body">
+      <h4 class="card-title">` + value.name + `</h4>
+      <p class="card-text">`+ value.description +`</p>
+      <div class="d-flex justify-content-between align-items-center flex-column-reverse flex-sm-row">
+        <div class="btn-group pt-3 pt-sm-0">
+          <button id="addCart" type="button" class="btn btn-success">Ajouter au Panier</button>
+            <select id="select" onchange="getSelectValue();" class="form-select mr-3 rounded-right" aria-label="Optique pour appareil photo">
+              <option id="option" value"null">Optiques</option>
+            </select>
+        </div>
+          <small class="text-muted">`+ value.price / 100 + "€" +`</small>
+      </div>
+    </div>
+    `;
     product.appendChild(productDiv);
     // menu deroulant des options
     const eltOption = document.getElementById("option");
       for (let j in value.lenses){
-    eltOption.insertAdjacentHTML("afterend", "<option value=\""+ value.lenses[j] +"\">"+ value.lenses[j] +"</option>");
+    eltOption.insertAdjacentHTML("afterend", "<option value="+ value.lenses[j] + ">"+ value.lenses[j] +"</option>");
     }
 
     addCart.addEventListener("click", function(event) {
@@ -143,7 +165,21 @@ function getCart() {
   for(let i in value){
     const cartDiv = document.createElement("div");
     cartDiv.classList.add("col-md-6", "col-lg-4");
-    cartDiv.innerHTML = "<div class=\"card mb-4 box-shadow\"><div class=\"embed-responsive embed-responsive-16by9\"><img class=\"card-img-top embed-responsive-item\" src=\"" + value[i].imageUrl + "\" alt=\"Card image cap\"></div><div class=\"card-body\"><h4 class=\"card-title\">"+ value[i].name +"</h4><p class=\"card-text\">"+ value[i].description +"</p><div class=\"d-flex justify-content-between align-items-center\"><p id=\"optique\" class=\"text-muted\">Optique : "+ value[i].lenses +"</p><small class=\"text-muted\">"+ value[i].price / 100 + "€" +"</small></div></div></div>";
+    cartDiv.innerHTML = `
+    <div class="card mb-4 box-shadow">
+      <div class="embed-responsive embed-responsive-16by9">
+        <img class="card-img-top embed-responsive-item" src="` + value[i].imageUrl + `" alt="Card image cap">
+      </div>
+      <div class="card-body">
+        <h4 class="card-title">`+ value[i].name +`</h4>
+        <p class="card-text">`+ value[i].description +`</p>
+        <div class="d-flex justify-content-between align-items-center">
+          <p id="optique" class="text-muted">Optique : `+ value[i].lenses +`</p>
+          <small class="text-muted">`+ value[i].price / 100 + "€" +`</small>
+        </div>
+      </div>
+    </div>
+    `;
     cart.appendChild(cartDiv);
     price = price + value[i].price;
   }
@@ -154,4 +190,8 @@ function getCart() {
     .getElementById("totalArticle")
     .textContent = price/100 + " €";
 
+}
+
+function getConfirm() {
+  document.getElementById("orderId").textContent = orderId;
 }
