@@ -75,27 +75,88 @@
                 <span><strong id="price">0 €</strong></span>
               </li>
             </ul>
-
           </div>
-          <p class="text-danger">Tout les champs sont obligatoires</p>
+
+          <!-- Formulaire -->
           <form id="contact">
+            <p id="error" class="text-danger">Tout les champs sont obligatoires</p>
             <div class="form-group">
-              <input type="text" class="form-control rounded-pill" placeholder="Nom" required id="firstName" name="firstName" value=""/>
+              <input 
+                type="text" 
+                class="form-control rounded-pill" 
+                placeholder="Nom" 
+                required 
+                id="lastName" 
+                name="lastName" 
+                value="" 
+                minlength="1" 
+                maxlength="50"
+                onpaste="return false;"/>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control rounded-pill" placeholder="Prenom" required id="lastName" name="lastName" value=""/>
+              <input 
+                type="text" 
+                class="form-control rounded-pill" 
+                placeholder="Prenom" 
+                required 
+                id="firstName" 
+                name="firstName" 
+                value="" 
+                minlength="1" 
+                maxlength="50"
+                onpaste="return false;"/>
             </div>
             <div class="form-group">
-              <input type="text" class="form-control rounded-pill" placeholder="Adresse" required id="adresse" name="adresse" value=""/>
+              <input 
+                type="text" 
+                class="form-control rounded-pill" 
+                placeholder="Adresse" 
+                required 
+                id="adresse" 
+                name="adresse" 
+                value="" 
+                minlength="1" 
+                maxlength="200"
+                onpaste="return false;"/>
             </div>
             <div class="form-group">
-              <input  type="text" class="form-control rounded-pill" placeholder="Ville" required id="city" name="city" value=""/>
+              <input 
+                type="text" 
+                class="form-control rounded-pill" 
+                placeholder="Ville" 
+                required 
+                id="city" 
+                name="city" 
+                value="" 
+                minlength="1" 
+                maxlength="60"
+                onpaste="return false;"/>
               </div>
             <div class="form-group">
-              <input  type="email" class="form-control rounded-pill" placeholder="Adresse email" required id="email" name="email" value=""/>
+              <input 
+                type="email" 
+                class="form-control rounded-pill" 
+                placeholder="Adresse email" 
+                required 
+                id="email" 
+                name="email" 
+                value="" 
+                minlength="1" 
+                maxlength="350"
+                onpaste="return false;"/>
               </div>
               <div class="form-group">
-                <input  type="email" class="form-control rounded-pill" placeholder="Confirmer l'email" required id="email2" name="email2" value=""/>
+                <input 
+                  type="email" 
+                  class="form-control rounded-pill" 
+                  placeholder="Confirmer l'email" 
+                  required 
+                  id="email2"
+                  name="email2" 
+                  value="" 
+                  minlength="1" 
+                  maxlength="350"
+                  onpaste="return false;"/>
                 </div>
             <input class="btn btn-primary btn-block rounded-pill"  type="button" onclick="save();" value="Commander" />
           </form>
@@ -139,7 +200,7 @@
     </footer>
 
 <!-- index.js first ,then jQuery, then Popper.js, then Bootstrap JS, then inner JS call -->
-    <script src="./index.js"></script>
+    <script src="./script.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

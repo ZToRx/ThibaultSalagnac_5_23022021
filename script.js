@@ -1,5 +1,6 @@
 let productInLS = JSON.parse(localStorage.getItem("article"));
 let selected;
+let totalPrice = 0;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const id = urlParams.get("id");
@@ -7,45 +8,6 @@ const orderId = urlParams.get("orderId");
 
 function getSelectValue(){
   selected = document.getElementById("select").value;
-}
-
-function save() {
-  const contact = {
-    firstName : document.getElementById("firstName").value,
-    lastName : document.getElementById("lastName").value,
-    address : document.getElementById("adresse").value,
-    city : document.getElementById("city").value,
-    email : document.getElementById("email").value
-  };
-  sessionStorage.setItem("contact", JSON.stringify(contact));
-  let products = [];
-
-  const value = JSON.parse(localStorage.getItem("article"))
-  for(let i in value){
-    products.push(value[i]._id);
-  }
-  const data = {contact, products};
-  console.log(data);
-  
-  fetch("http://localhost:3000/api/cameras/order", {
-    method: "POST",
-    headers: {
-      "Accept": "application/json", 
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  })
-
-  .then(function(res) {
-    if (res.ok) {
-      return res.json();
-    }
-  })
-
-  .then(function(value) {
-    window.location.replace("http://127.0.0.1:5500/ThibaultSalagnac_5_23022021/confirm.html?orderId="+ value.orderId);
-  });
-
 }
 
 //Cameras
@@ -59,10 +21,8 @@ function getAllProduct() {
   })
 
   .then(function(value) {
-    console.table(value);
-
     for(let i in value) {
-      //card de chaque pruduit
+      //card de chaque produit
       const catalogueDiv = document.createElement("div");
       catalogueDiv.classList.add("col-md-4");
       catalogueDiv.innerHTML = `
@@ -87,7 +47,6 @@ function getAllProduct() {
 
   .catch(function(err) {
     console.log("Echec de la requete");
-    // Une erreur est survenue
   });
 }
 
@@ -101,8 +60,6 @@ function getProduct() {
   })
 
   .then(function(value){
-    console.table(value);
-    // card du produit selectionner
     const productDiv = document.createElement("div");
     productDiv.classList.add("card","mb-4","box-shadow");
     productDiv.innerHTML = `
@@ -128,6 +85,7 @@ function getProduct() {
     eltOption.insertAdjacentHTML("afterend", "<option value="+ value.lenses[j] + ">"+ value.lenses[j] +"</option>");
     }
 
+    // Bouton d'ajout au panier
     addCart.addEventListener("click", function(event) {
       event.preventDefault();
       if(productInLS){
@@ -154,14 +112,13 @@ function getProduct() {
 
   .catch(function(err) {
     console.log("Echec de la requete");
-    // Une erreur est survenue
   });
 }
 
+// Panier
 function getCart() {
   let value = JSON.parse(localStorage.getItem("article"))
   let price = 0;
-  console.log(value)
   for(let i in value){
     const cartDiv = document.createElement("div");
     cartDiv.classList.add("col-md-6", "col-lg-4");
@@ -183,15 +140,138 @@ function getCart() {
     cart.appendChild(cartDiv);
     price = price + value[i].price;
   }
+
+  totalPrice = price/100 ;
+
   document
     .getElementById("price")
-    .textContent = price/100 + " €";
+    .textContent = totalPrice + " €";
+
   document
     .getElementById("totalArticle")
-    .textContent = price/100 + " €";
+    .textContent = totalPrice + " €";
 
 }
 
+// Bouton d'envois du formulaire
+
+function save() {
+  // Recuperation du formulaire
+  const contact = {
+    lastName : document.getElementById("lastName").value,
+    firstName : document.getElementById("firstName").value,
+    address : document.getElementById("adresse").value,
+    city : document.getElementById("city").value,
+    email : document.getElementById("email").value
+  };
+  // Verification du panier
+  if(productInLS){
+    // Verification des inputs
+    if(isContactValid(contact)){
+      // Stockage de la commande
+      sessionStorage.setItem("contact", JSON.stringify(contact));
+      sessionStorage.setItem("totalPrice", JSON.stringify(totalPrice));
+      let products = [];
+      const value = JSON.parse(localStorage.getItem("article"))
+      for(let i in value){
+        products.push(value[i]._id);
+      }
+      // Envoie au serveur de la commande
+      const data = {contact, products};
+      fetch("http://localhost:3000/api/cameras/order", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json", 
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+
+      .then(function(res) {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+
+      .then(function(value) {
+        // Redirection vers la page de confirmation
+        window.location.replace("http://127.0.0.1:5500/ThibaultSalagnac_5_23022021/confirm.html?orderId="+ value.orderId);
+      });
+    } 
+  } else {
+    alert("Votre panier est vide");
+  }
+}
+
+// Validation du formulaire de contact
+
+function isContactValid(value){
+
+    if(value.lastName === "") {
+      document
+        .getElementById("error")
+        .innerText = "Veuillez renseigner votre Nom.";
+      return(false);
+    }
+
+    else if(value.firstName === "") {
+      document
+        .getElementById("error")
+        .textContent = "Veuillez renseigner votre Prenom.";
+      return(false);
+    }
+
+    else if(value.address === "") {
+      document
+        .getElementById("error")
+        .textContent = "Veuillez renseigner votre Adresse.";
+      return(false);
+    }
+
+    else if(value.city === "") {
+      document
+        .getElementById("error")
+        .textContent = "Veuillez renseigner votre Ville.";
+      return(false);
+    }
+
+    else if(value.email === "") {
+      document
+        .getElementById("error")
+        .textContent = "Veuillez renseigner votre Email.";
+      return(false);
+    }
+
+    else if(document.getElementById("email2").value === "") {
+      document
+        .getElementById("error")
+        .textContent = "Veuillez confirmer votre Email.";
+      return(false);
+    }
+
+    else if(document.getElementById("email2").value !== value.email) {
+      document
+        .getElementById("error")
+        .textContent = "Les emails ne correspondent pas.";
+      return(false);
+      }
+
+    else if(value.email !== "") {
+      document
+        .getElementById("error")
+        .textContent = "Email incorrecte";
+      return(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value.email));
+    }
+
+    else {
+      alert("Une ERREUR inattendue c'est produite , veuillez reessayer");
+      return(false)
+    }
+
+  }
+
+// Page de confirmation de la commande
 function getConfirm() {
+  document.getElementById("price").textContent =  sessionStorage.getItem("totalPrice") + " €";
   document.getElementById("orderId").textContent = orderId;
 }
